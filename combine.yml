@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-alertmanager
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 1m
+
+    receivers:
+    - name: 'notifications'
+      email_configs:
+      - to: keithkadima@gmail.com
+        from: keithkadima@gmail.com
+        smarthost: smtp.gmail.com:587
+        auth_username: keithkadima@gmail.com
+        auth_identity: keithkadima@gmail.com
+        auth_password: hzpg canb yzln pvbv
+        send_resolved: true
+        headers:
+          subject: "Prometheus - Alert"
+          text: "{{ range .Alerts }} Hi, \n{{ .Annotations.summary }}\n{{ .Annotations.description }} {{end}}"
+
+      slack_configs:
+      - channel: '#upcommerce-devs'
+        send_resolved: true
+        api_url: 'https://hooks.slack.com/services/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'
+
+    route:
+      group_wait: 10s
+      group_interval: 2m
+      receiver: 'notifications'
+      repeat_interval: 2m
